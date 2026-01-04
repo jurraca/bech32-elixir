@@ -16,6 +16,7 @@ defmodule Bech32Test do
     long_data = :binary.copy(<<1, 2, 3, 4, 5>>, 10)
     long_addr = Bech32.encode("ckb", long_data)
 
+    # Verify the address is actually over 90 characters
     assert byte_size(long_addr) > 90
 
     # Without ignore_length, should fail
