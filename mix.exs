@@ -6,8 +6,8 @@ defmodule Bech32.MixProject do
       app: :bech32,
       version: "1.0.0",
       elixir: "~> 1.9",
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod,
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
       name: "Bech32",
@@ -25,7 +25,7 @@ defmodule Bech32.MixProject do
       name: "bech32",
       files: ~w(lib .formatter.exs mix.exs README* LICENSE* CHANGELOG*),
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/f2pool/bech32-elixir"},
+      links: %{"GitHub" => "https://github.com/f2pool/bech32-elixir"}
     ]
   end
 
