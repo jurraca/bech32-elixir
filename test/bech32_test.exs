@@ -11,6 +11,18 @@ defmodule Bech32Test do
     assert {:ok, "ckb", <<1, 0, 248, 233, 196, 92, 241, 52, 177, 249, 178, 100, 1, 226, 254, 133, 46, 33, 214, 246, 151, 234>>} === Bech32.decode("ckb1qyq036wytncnfv0ekfjqrch7s5hzr4hkjl4qs54f7e")
   end
 
+  test "valid_predicate? returns true for valid addresses" do
+    assert Bech32.valid_predicate?("ckb1qyqdmeuqrsrnm7e5vnrmruzmsp4m9wacf6vsxasryq") == true
+    assert Bech32.valid_predicate?("bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4") == true
+    assert Bech32.valid_predicate?("a12uel5l") == true
+  end
+
+  test "valid_predicate? returns false for invalid addresses" do
+    assert Bech32.valid_predicate?("invalid") == false
+    assert Bech32.valid_predicate?("bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t5") == false
+    assert Bech32.valid_predicate?("") == false
+  end
+
   test "ignore_length option allows addresses over 90 characters" do
     # Create a long data payload (50 bytes = 80 chars in bech32 encoding, plus hrp and checksum > 90)
     long_data = :binary.copy(<<1, 2, 3, 4, 5>>, 10)
