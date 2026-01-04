@@ -110,11 +110,11 @@ defmodule Bech32 do
     Returns `true` or `false`.
 
     ## Example
-      iex> Bech32.verify_predicate("ckb1qyqdmeuqrsrnm7e5vnrmruzmsp4m9wacf6vsxasryq")
+      iex> Bech32.valid_predicate?("ckb1qyqdmeuqrsrnm7e5vnrmruzmsp4m9wacf6vsxasryq")
       true
   """
-  @spec verify_predicate(String.t()) :: boolean
-  def verify_predicate(addr) when is_binary(addr) do
+  @spec valid_predicate?(String.t()) :: boolean
+  def valid_predicate?(addr) when is_binary(addr) do
     case verify(addr) do
       :ok -> true
       _ -> false
