@@ -39,6 +39,22 @@ defmodule Bech32Test do
     assert {:error, :invalid_input} = Bech32.verify(:atom)
   end
 
+  test "decode handles non-string input without crashing" do
+    assert {:error, :invalid_input} = Bech32.decode(nil)
+    assert {:error, :invalid_input} = Bech32.decode(123)
+    assert {:error, :invalid_input} = Bech32.decode([1, 2, 3])
+    assert {:error, :invalid_input} = Bech32.decode(%{})
+    assert {:error, :invalid_input} = Bech32.decode(:atom)
+  end
+
+  test "segwit_decode handles non-string input without crashing" do
+    assert {:error, :invalid_input} = Bech32.segwit_decode(nil, "bc1test")
+    assert {:error, :invalid_input} = Bech32.segwit_decode("bc", nil)
+    assert {:error, :invalid_input} = Bech32.segwit_decode(123, "bc1test")
+    assert {:error, :invalid_input} = Bech32.segwit_decode("bc", 123)
+    assert {:error, :invalid_input} = Bech32.segwit_decode(:atom, :atom)
+  end
+
   test "ignore_length option allows addresses over 90 characters" do
     # Create a long data payload (50 bytes = 80 chars in bech32 encoding, plus hrp and checksum > 90)
     long_data = :binary.copy(<<1, 2, 3, 4, 5>>, 10)

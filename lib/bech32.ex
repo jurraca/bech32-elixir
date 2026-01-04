@@ -295,8 +295,11 @@ defmodule Bech32 do
              | :not_in_charset
              | :checksum_failed
              | :invalid_char
-             | :mixed_case_char}
-  def decode(addr, opts \\ []) when is_binary(addr) do
+             | :mixed_case_char
+             | :invalid_input}
+  def decode(addr, opts \\ [])
+
+  def decode(addr, opts) when is_binary(addr) do
     unless Enum.any?(:erlang.binary_to_list(addr), fn c -> c < ?! or c > ?~ end) do
       unless mixed_case?(addr) do
         addr = String.downcase(addr)
@@ -359,6 +362,8 @@ defmodule Bech32 do
     end
   end
 
+  def decode(_, _), do: {:error, :invalid_input}
+
   @doc ~S"""
     Decode a segwit bech32 address.
 
@@ -407,6 +412,8 @@ defmodule Bech32 do
         {:error, reason}
     end
   end
+
+  def segwit_decode(_, _), do: {:error, :invalid_input}
 
   @spec mixed_case?(String.t()) :: boolean
   defp mixed_case?(addr) when is_binary(addr) do
