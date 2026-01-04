@@ -272,7 +272,7 @@ defmodule Bech32 do
                 {:error, :no_hrp}
               (last_one_pos + 7) > byte_size(addr) ->
                 {:error, :checksum_too_short}
-              byte_size(addr) > 90 and Keyword.get(opts, :ignore_length, false)
+              byte_size(addr) > 90 and not Keyword.get(opts, :ignore_length, false) ->
                 {:error, :too_long}
               data_part === nil ->
                 {:error, :not_in_charset}
