@@ -94,13 +94,15 @@ defmodule Bech32 do
       iex> Bech32.verify("ckb1qyqdmeuqrsrnm7e5vnrmruzmsp4m9wacf6vsxasryq")
       :ok
   """
-  @spec verify(String.t()) :: :ok | {:error, :checksum_failed | :invalid_char | :not_bech32}
+  @spec verify(String.t()) :: :ok | {:error, :checksum_failed | :invalid_char | :not_bech32 | :invalid_input}
   def verify(addr) when is_binary(addr) do
     case split_hrp_and_data_string(addr) do
       {:ok, hrp, data_string} -> verify_checksum(hrp, data_string)
       {:error, :not_bech32}   -> {:error, :not_bech32}
     end
   end
+
+  def verify(_), do: {:error, :invalid_input}
 
   @doc ~S"""
     Verify the checksum of the address report success or failure. Note that this doesn't perform exhaustive validation
@@ -113,13 +115,15 @@ defmodule Bech32 do
       iex> Bech32.valid_predicate?("ckb1qyqdmeuqrsrnm7e5vnrmruzmsp4m9wacf6vsxasryq")
       true
   """
-  @spec valid_predicate?(String.t()) :: boolean
+  @spec valid_predicate?(any()) :: boolean
   def valid_predicate?(addr) when is_binary(addr) do
     case verify(addr) do
       :ok -> true
       _ -> false
     end
   end
+
+  def valid_predicate?(_), do: false
 
   @doc ~S"""
     Get the human readable part of the address. Very little validation is done here please use `decode/1` or `decode/2`

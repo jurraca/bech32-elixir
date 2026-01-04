@@ -23,6 +23,22 @@ defmodule Bech32Test do
     assert Bech32.valid_predicate?("") == false
   end
 
+  test "valid_predicate? handles non-string input without crashing" do
+    assert Bech32.valid_predicate?(nil) == false
+    assert Bech32.valid_predicate?(123) == false
+    assert Bech32.valid_predicate?([1, 2, 3]) == false
+    assert Bech32.valid_predicate?(%{}) == false
+    assert Bech32.valid_predicate?(:atom) == false
+  end
+
+  test "verify handles non-string input without crashing" do
+    assert {:error, :invalid_input} = Bech32.verify(nil)
+    assert {:error, :invalid_input} = Bech32.verify(123)
+    assert {:error, :invalid_input} = Bech32.verify([1, 2, 3])
+    assert {:error, :invalid_input} = Bech32.verify(%{})
+    assert {:error, :invalid_input} = Bech32.verify(:atom)
+  end
+
   test "ignore_length option allows addresses over 90 characters" do
     # Create a long data payload (50 bytes = 80 chars in bech32 encoding, plus hrp and checksum > 90)
     long_data = :binary.copy(<<1, 2, 3, 4, 5>>, 10)
