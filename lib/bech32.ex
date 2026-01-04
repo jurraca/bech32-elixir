@@ -264,7 +264,7 @@ defmodule Bech32 do
       unless (String.downcase(addr) !== addr) and (String.upcase(addr) !== addr) do
         addr = String.downcase(addr)
         data_part = ~r/.+(1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]+)$/ |> Regex.run(addr)
-        case ~r/.+(1.+)$/ |> Regex.run(addr, return: :index) do
+        case ~r/.*(1.+)$/ |> Regex.run(addr, return: :index) do
           nil -> {:error, :no_separator}
           [_, {last_one_pos, _tail_size_including_one}] ->
             cond do
