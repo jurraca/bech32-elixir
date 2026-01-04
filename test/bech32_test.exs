@@ -62,9 +62,7 @@ defmodule Bech32Test do
     end
 
     test "empty HRP (1 at start)" do
-      # Implementation returns :no_separator when string starts with "1"
-      assert {:error, reason} = Bech32.decode("1pzry9x0s0muk")
-      assert reason in [:no_hrp, :no_separator]
+      assert {:error, :no_hrp} = Bech32.decode("1pzry9x0s0muk")
     end
 
     test "invalid data character (b)" do
@@ -80,15 +78,11 @@ defmodule Bech32Test do
     end
 
     test "empty HRP - 10a06t8" do
-      # Implementation returns :no_separator when string starts with "1"
-      assert {:error, reason} = Bech32.decode("10a06t8")
-      assert reason in [:no_hrp, :no_separator]
+      assert {:error, :no_hrp} = Bech32.decode("10a06t8")
     end
 
     test "empty HRP - 1qzzfhee" do
-      # Implementation returns :no_separator when string starts with "1"
-      assert {:error, reason} = Bech32.decode("1qzzfhee")
-      assert reason in [:no_hrp, :no_separator]
+      assert {:error, :no_hrp} = Bech32.decode("1qzzfhee")
     end
 
     test "HRP character out of range (0x20 space)" do
