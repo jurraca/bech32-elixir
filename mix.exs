@@ -5,7 +5,7 @@ defmodule Bech32.MixProject do
     [
       app: :bech32,
       version: "1.0.0",
-      elixir: "~> 1.9",
+      elixir: "~> 1.15",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       description: description(),

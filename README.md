@@ -1,12 +1,14 @@
 # Bech32
 
-  This is an implementation of BIP-0173
+  This is an implementation of BIP-0173, "Bech32 address format for native v0-16 witness outputs".
 
-  Bech32 address format for native v0-16 witness outputs.
-
-  See https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki for details
+  See https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki for details.
   
   This library was implemented with Bitcoin and Nervos CKB in mind.
+
+  Forked from Eric des Courtis' now unmaintained [implementation](https://github.com/f2pool/bech32-elixir).
+
+  No dependencies, min elixir version: `1.15`.
 
 ## Installation
 
