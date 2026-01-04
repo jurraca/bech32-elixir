@@ -25,3 +25,5 @@ bech32-*.tar
 # Elixir Language Server
 .elixir_ls/
 
+/.hex
+/.mix
