@@ -265,7 +265,7 @@ defmodule Bech32 do
     }
   def decode(addr, opts \\ []) when is_binary(addr) do
     unless Enum.any?(:erlang.binary_to_list(addr), fn c -> c < ?! or c > ?~ end) do
-      unless (String.downcase(addr) !== addr) and (String.upcase(addr) !== addr) do
+      unless mixed_case?(addr) do
         addr = String.downcase(addr)
         data_part = ~r/.+(1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]+)$/ |> Regex.run(addr)
         case ~r/.*(1.+)$/ |> Regex.run(addr, return: :index) do
@@ -287,28 +287,23 @@ defmodule Bech32 do
                   :ok ->
                     checksum_bits = 6 * 8
                     data_bits = bit_size(data_with_checksum) - checksum_bits
-                    << data :: bitstring-size(data_bits), _checksum :: size(checksum_bits) >> = data_with_checksum
-                    data = data
-                           |> :erlang.binary_to_list()
-                           |> Enum.map(&char_to_value/1)
-                           |> Enum.reverse()
-                           |> Enum.reduce(
-                                "",
-                                fn v, acc ->
-                                  << v :: 5, acc :: bitstring >>
-                                end)
-                    data_bitlen = bit_size(data)
-                    data_bytes = div(data_bitlen, 8)
-                    data = case rem(data_bitlen, 8) do
-                      0 -> data
-                      n when n < 5 ->
-                        data_bitlen = data_bytes * 8
-                        << data :: bitstring-size(data_bitlen), _ :: bitstring >> = data
-                        data
-                      n ->
-                        missing_bits = 8 - n
-                        << data :: bitstring, 0 :: size(missing_bits) >>
-                    end
+
+                    <<data::bitstring-size(data_bits), _checksum::size(checksum_bits)>> =
+                      data_with_checksum
+
+                    data =
+                      data
+                      |> :erlang.binary_to_list()
+                      |> Enum.map(&char_to_value/1)
+                      |> Enum.reverse()
+                      |> Enum.reduce(
+                        "",
+                        fn v, acc ->
+                          <<v::5, acc::bitstring>>
+                        end
+                      )
+                      |> align_data()
+
                     {:ok, hrp, data}
                   {:error, reason} -> {:error, reason}
                 end
@@ -354,7 +349,34 @@ defmodule Bech32 do
         end
       {:ok, _other_hrp, _data} ->
         {:error, :wrong_hrp}
-      {:error, reason} -> {:error, reason}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  @spec mixed_case?(String.t()) :: boolean
+  defp mixed_case?(addr) when is_binary(addr) do
+    String.downcase(addr) !== addr and String.upcase(addr) !== addr
+  end
+
+  @spec align_data(String.t()) :: String.t()
+  defp align_data(data) do
+    # Aligns the bitstring to full bytes, padding with zero bits if necessary.
+    data_bitlen = bit_size(data)
+    data_bytes = div(data_bitlen, 8)
+    case rem(data_bitlen, 8) do
+      0 ->
+        data
+
+      n when n < 5 ->
+        data_bitlen = data_bytes * 8
+        <<data::bitstring-size(data_bitlen), _::bitstring>> = data
+        data
+
+      n ->
+        missing_bits = 8 - n
+        <<data::bitstring, 0::size(missing_bits)>>
     end
   end
 end
